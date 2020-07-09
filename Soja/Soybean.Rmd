@@ -1,0 +1,93 @@
+---
+title: "Soybean"
+author: "Maxwel Coura Oliveira"
+date: "5/16/2020"
+output: html_document
+---
+
+
+```{r include=FALSE}
+library(tidyverse)
+library(ggthemes)
+library(patchwork)
+```
+
+
+
+
+```{r}
+area_br <- read_csv("Area_BR.csv") %>% 
+  pivot_longer(cols = 2:45, names_to = "year", values_to = "area")
+
+prod_br <- read_csv("Prod_BR.csv") %>% 
+  pivot_longer(cols = 2:45, names_to = "year", values_to = "prod")
+
+yield_br <- read_csv("Yield_BR.csv") %>% 
+  pivot_longer(cols = 2:45, names_to = "year", values_to = "yield")
+
+brasil <- bind_cols(area_br, prod_br, yield_br) %>% 
+  select(UF, year, area, prod, yield) %>% 
+  filter(UF != "NORTE" &  UF != "NORDESTE" &  UF != "SUDESTE"  &  UF != "CENTRO-OESTE" &  UF != "SUL" & UF != "BRASIL" & UF != "NORTE/NORDESTE" & UF != "CENTRO-SUL")  %>% 
+  mutate(area = gsub("-","0", area),
+         prod = gsub("-","0", prod),
+         yield = gsub("-","0", yield)) %>% 
+  filter(area != "0") %>% 
+  mutate(yield = gsub(",","", yield),
+         area = gsub(",","", area),
+         prod = gsub(",","", prod)) %>% 
+  mutate(yield = as.numeric(yield),
+         area = as.numeric(area),
+         prod = as.numeric(prod),
+         year = as.numeric(year)) %>% 
+  mutate(area = area / 1000,
+         prod = prod / 1000) %>% 
+  mutate(sacas = yield / 60)
+
+brasil
+```
+
+
+
+```{r warning = FALSE}
+p1 <- brasil %>% 
+  ggplot() + aes(x=year, y=sacas, size=area) + geom_jitter(alpha=0.2) +
+    geom_smooth(method = 'loess',formula=y~x, se=FALSE, show.legend = FALSE, color="red") +
+  facet_wrap(~UF) +
+  labs(x="", y="Produtividade de soja (sacas/ha)", title ="Produtividade de soja (kg/ha) por estado brasileiro", subtitle= "Fonte: Conab Maio/2020", caption="Figura: Maxwel C Oliveira") + theme_bw() +
+  scale_size_continuous(name="Área (mi ha)") +
+  theme(legend.position = "bottom",
+        panel.grid = element_blank(),
+        legend.title = element_text(),  
+        #plot.background = element_rect(fill="#1A171B"),
+        plot.title = element_text(face ="bold", color="#1A171B"), 
+        plot.subtitle = element_text(face ="bold", color="#006729", size=8), 
+        axis.title = element_text(face ="bold", color="#1A171B"), 
+        axis.text.x = element_text(color="#1A171B", angle = 30),
+        axis.text.y = element_text(color="#1A171B")) +
+  ggsave("states_yield.pdf", width = 9, height=6, dpi=600)
+```
+
+```{r warning = FALSE}
+p2 <- brasil %>% 
+  ggplot() + aes(x=year, y=prod, size=area) + geom_jitter(alpha=0.2) +
+    geom_smooth(method = 'loess',formula=y~x, se=FALSE, show.legend = FALSE, color="red") +
+  facet_wrap(~UF) +
+  labs(x="", y="Produção de soja (mi ton)", title ="Produção de soja (mi ton) por estado brasileiro", subtitle= "Fonte: Conab Maio/2020", caption="Figura: Maxwel C Oliveira") + theme_bw() +
+  scale_size_continuous(name="Área (mi ha)") +
+  theme(legend.position = "bottom",
+        panel.grid = element_blank(),
+        legend.title = element_text(),
+        #plot.background = element_rect(fill="#1A171B"),
+        plot.title = element_text(face ="bold", color="#1A171B"), 
+        plot.subtitle = element_text(face ="bold", color="#006729", size=8), 
+        axis.title = element_text(face ="bold", color="#1A171B"), 
+        axis.text.x = element_text(color="#1A171B", angle = 30),
+        axis.text.y = element_text(color="#1A171B")) +
+  ggsave("states_prod.png", width = 9, height=6, dpi=600)
+```
+
+```{r warning = FALSE}
+p1 / p2 +
+  ggsave("states.pdf", width = 10, height=15, dpi=600)
+```
+

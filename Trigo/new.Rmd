@@ -1,0 +1,127 @@
+---
+title: "Trigo"
+author: "Maxwel Coura Oliveira"
+date: "5/6/2020"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r include=FALSE}
+Area_ES <- read_csv("Area.csv") %>% 
+  gather("year", "Area", 2:45)  %>% 
+  filter(REGIAO != "BRASIL" & REGIAO != "NORTE" & REGIAO != "NORDESTE" & REGIAO != "CENTRO-OESTE" & REGIAO != "SUDESTE" & REGIAO != "SUL" & REGIAO != "NORTE-NORDESTE" & REGIAO != "CENTRO-SUL")
+#filter(Region == "Brasil")
+
+glimpse(Area_ES)
+Area_ES$year <- as.numeric(Area_ES$year)
+```
+
+```{r include=FALSE}
+Prod_ES <- read_csv("Producao.csv") %>% 
+  gather("year", "Prod", 2:45)  %>% 
+  filter(REGIAO != "BRASIL" & REGIAO != "NORTE" & REGIAO != "NORDESTE" & REGIAO != "CENTRO-OESTE" & REGIAO != "SUDESTE" & REGIAO != "SUL" & REGIAO != "NORTE-NORDESTE" & REGIAO != "CENTRO-SUL")
+
+glimpse(Prod_ES)
+Prod_ES$year <- as.numeric(Prod_ES$year)
+```
+
+
+
+```{r include=FALSE}
+Yield_ES <- read_csv("produt.csv") %>% 
+  gather("year", "yield", 2:45)  %>% 
+  filter(REGIAO != "BRASIL" & REGIAO != "NORTE" & REGIAO != "NORDESTE" & REGIAO != "CENTRO-OESTE" & REGIAO != "SUDESTE" & REGIAO != "SUL" & REGIAO != "NORTE-NORDESTE" & REGIAO != "CENTRO-SUL")
+
+glimpse(Yield_ES)
+Yield_ES$year <- as.numeric(Yield_ES$year)
+```
+
+
+```{r}
+data <- Area_ES %>% 
+    bind_cols(Prod_ES, Yield_ES) %>% 
+  select(REGIAO, year, Area, Prod, yield) %>% 
+  filter(REGIAO == "RS" | REGIAO == "SC" | REGIAO == "PR" | REGIAO == "MG" | REGIAO == "SP" | REGIAO == "BA" | REGIAO == "GO" | REGIAO == "MS" | REGIAO == "MT") %>% 
+  filter(yield != 0 & Prod != 0) %>% 
+  mutate(Area = Area/1000)
+```
+
+
+ 
+    
+```{r}
+ggplot(data) + aes(x=year, y=yield, size=Area) + 
+  geom_jitter(aes(size=Area), alpha=0.5) + theme_bw() +
+  labs(x="", y="Produtividade (kg/ha)", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  geom_smooth(method = 'loess',formula=y~x, se=FALSE, show.legend = FALSE)  + facet_wrap(~REGIAO, nrow=2) +
+   scale_size_continuous(name="Área (milhão ha)") +
+  theme(legend.position = "right",
+        panel.grid = element_blank(),
+        legend.title = element_text(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(face ="bold", color="#006729"), 
+        axis.title = element_text(face ="bold", color="#1A171B"), 
+        axis.text.x = element_text(color="#1A171B"),
+        axis.text.y = element_text(color="#1A171B")) +
+  ggsave("states_yield.png", width = 12, height=6, dpi=600)
+```
+
+
+
+
+```{r}
+ggplot(data) + aes(x=year, y=yield, size=Area) + 
+  geom_jitter(aes(size=Area), alpha=0.5) + theme_bw() +
+  labs(x="", y="Produtividade de trigo (kg/ha)", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  geom_smooth(method = 'loess',formula=y~x, se=FALSE, show.legend = FALSE, size=2)  +
+   scale_size_continuous(name="Área (mi ha)") +
+  theme(legend.position = "right",
+        panel.grid = element_blank(),
+        legend.title = element_text(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(face ="bold", color="#006729"), 
+        axis.title = element_text(face ="bold", color="#1A171B"), 
+        axis.text.x = element_text(color="#1A171B"),
+        axis.text.y = element_text(color="#1A171B")) +
+  ggsave("all_yield.png", width = 6, height=4, dpi=600)
+```
+
+
+
+
+
+```{r}
+ggplot(data) + aes(x=year, y=Prod, size=Area) + 
+  geom_jitter(aes(size=Area), alpha=0.5) + theme_bw() +
+  labs(x="", y="Produção (mil ton)", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  geom_smooth(method = 'loess',formula=y~x, se=FALSE, show.legend = FALSE)  + facet_grid(~REGIAO) +
+   scale_size_continuous(name="Área (mi ha)") +
+  theme(legend.position = "right",
+        panel.grid = element_blank(),
+        legend.title = element_text(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(face ="bold", color="#006729"), 
+        axis.title = element_text(face ="bold", color="#1A171B"), 
+        axis.text.x = element_text(color="#1A171B", angle =30),
+        axis.text.y = element_text(color="#1A171B")) +
+  ggsave("states_prod.png", width = 12, height=4, dpi=600)
+```
+
+
+
+
+```{r}
+ggplot(data) + aes(x=year, y=Prod, size=Area) + 
+  geom_jitter(aes(size=Area), alpha=0.5) + theme_bw() +
+  labs(x="", y="Produção (mil ton)", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  geom_smooth(method = 'loess',formula=y~x, se=FALSE, show.legend = FALSE)  +
+  scale_size_continuous(name="Área (mi ha)") +
+  theme(legend.position = "right",
+        panel.grid = element_blank(),
+        legend.title = element_text(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(face ="bold", color="#006729"), 
+        axis.title = element_text(face ="bold", color="#1A171B"), 
+        axis.text.x = element_text(color="#1A171B"),
+        axis.text.y = element_text(color="#1A171B")) +
+  ggsave("all_prod.png", width = 6, height=4, dpi=600)
+```

@@ -1,0 +1,581 @@
+---
+title: "Área plantada, Produção e Produtividade do Trigo no Brasil"
+subtitle: "Série histórica 1976 a 2020"
+author: "Maxwel Coura Oliveira"
+Institute: "Universidade do Oeste Paulista"
+date: "2/17/2020"
+output:
+  pdf_document:
+    toc: true
+    fig_caption: true
+    number_sections: true
+    keep_tex: yes
+  fontsize: 11pt
+  geometry: [top=1in, bottom=1in, right=1in, left=1.5in]
+---
+
+```{r include=FALSE}
+library(tidyverse)
+```
+
+```{r opts, include=FALSE}
+knitr::opts_chunk$set(fig.path = "images/")
+```
+
+
+# Área plantada de Trigo 
+
+## Área plantada de Trigo no Brasil
+
+```{r include=FALSE}
+BR_area <- read_csv("Area.csv") %>% 
+  gather("year", "Area", 2:45)  %>% 
+  filter(REGIAO == "BRASIL") %>% 
+  arrange(desc(Area))
+
+glimpse(BR_area)
+BR_area$year <- as.numeric(BR_area$year)
+```
+
+```{r echo=FALSE, message=FALSE}
+ggplot(BR_area, aes(x=year, y=Area, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + geom_line() + geom_point() + theme_bw() +
+  scale_color_manual(values = c("blue")) +
+  labs(y="Área plantada (mil ha)", x="", title="Série histórica de área plantada (mil ha) de trigo no Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("BR_area.png", height=6, width=7, dpi=600)
+```
+
+## Área plantada de Trigo nas macro-regiões do Brasil
+
+```{r include=FALSE}
+MBR_area <- read_csv("Area.csv") %>% 
+  gather("year", "Area", 2:45)  %>% 
+  filter(REGIAO == "NORTE-NORDESTE" | REGIAO=="CENTRO-SUL")
+
+glimpse(MBR_area)
+MBR_area$year <- as.numeric(MBR_area$year)
+```
+
+```{r echo=FALSE, message=FALSE}
+ggplot(MBR_area, aes(x=year, y=Area, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + geom_line() + geom_point() + theme_bw() +
+  scale_color_manual(values = c("blue", "red", "black")) +
+  labs(y="Área plantada (mil ha)", x="", title="Série histórica de área plantada (mil ha) de trigo nas macro-regiões do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=10, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("MBR_area.png", height=6, width=7, dpi=600)
+```
+
+
+
+## Área plantada de Trigo nas regiões brasileiras
+
+```{r include=FALSE}
+Area_BR <- read_csv("Area.csv") %>% 
+  gather("year", "Area", 2:45)  %>% 
+  filter(REGIAO == "NORTE" | REGIAO == "NORDESTE" | REGIAO == "CENTRO-OESTE" | REGIAO == "SUDESTE" | REGIAO == "SUL")
+#filter(Region == "Brasil")
+
+glimpse(Area_BR)
+Area_BR$year <- as.numeric(Area_BR$year)
+```
+
+```{r echo=FALSE, message=FALSE}
+ggplot(Area_BR, aes(x=year, y=Area, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + geom_line() + geom_point() + theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red", "black", "purple")) +
+  labs(y="Área plantada (mil ha)", x="", title="Série histórica de área plantada (mil ha) de trigo nas regiões do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Area_BR.png", height=6, width=7, dpi=600)
+```
+
+## Área plantada de Trigo nos estados do Sudeste
+
+
+```{r include=FALSE}
+Area_SE <- read_csv("Area.csv") %>% 
+  gather("year", "Area", 2:45)  %>% 
+  filter(REGIAO == "ES" | REGIAO == "SP" | REGIAO == "MG" | REGIAO == "RJ")
+#filter(Region == "Brasil")
+
+glimpse(Area_SE)
+Area_SE$year <- as.numeric(Area_SE$year)
+```
+
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Area_SE, aes(x=year, y=Area, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + geom_line() + geom_point() + theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red", "black")) +
+  labs(y="Área plantada (mil ha)", x="", title="Série histórica de área plantada (mil ha) de trigo no Sudeste do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Area_SE.png", height=6, width=7, dpi=600)
+```
+
+
+## Área plantada de Trigo nos estados do Sul
+
+
+```{r include=FALSE}
+Area_S <- read_csv("Area.csv") %>% 
+  gather("year", "Area", 2:45)  %>% 
+  filter(REGIAO == "SC" | REGIAO == "RS" | REGIAO == "PR")
+#filter(Region == "Brasil")
+
+glimpse(Area_S)
+Area_S$year <- as.numeric(Area_S$year)
+```
+
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Area_S, aes(x=year, y=Area, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + geom_line() + geom_point() + theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red")) +
+  labs(y="Área plantada (mil ha)", x="", title="Série histórica de área plantada (mil ha) de trigo no Sul do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Area_S.png", height=6, width=7, dpi=600)
+```
+
+
+
+
+## Área plantada de Trigo nos estados do Centro-Oeste
+
+
+```{r include=FALSE}
+Area_CO <- read_csv("Area.csv") %>% 
+  gather("year", "Area", 2:45)  %>% 
+  filter(REGIAO == "MT" | REGIAO == "MS" | REGIAO == "GO")
+#filter(Region == "Brasil")
+
+glimpse(Area_CO)
+Area_CO$year <- as.numeric(Area_CO$year)
+```
+
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Area_CO, aes(x=year, y=Area, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + geom_line() + geom_point() + theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red")) +
+  labs(y="Área plantada (mil ha)", x="", title="Série histórica de área plantada (mil ha) de trigo no Centro-0este do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=11, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Area_CO.png", height=6, width=7, dpi=600)
+```
+
+
+## Área plantada de Trigo nos estados do Nordeste
+
+```{r include=FALSE}
+Area_NE <- read_csv("Area.csv") %>% 
+  gather("year", "Area", 2:45)  %>% 
+  filter(REGIAO == "BA" | REGIAO == "SE" | REGIAO == "PE" | REGIAO == "RN" | REGIAO == "PB" | REGIAO == "PI" | REGIAO == "MA" | REGIAO == "CE" | REGIAO == "AL")
+
+glimpse(Area_NE)
+Area_NE$year <- as.numeric(Area_NE$year)
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Area_NE, aes(x=year, y=Area, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + 
+  geom_line() + geom_point() +
+  theme_bw() +
+  scale_color_manual(values = c("green", "blue", "red", "black", "purple", "orange", "grey", "yellow", "brown")) +
+  labs(y="Área plantada (mil ha)", x="", title="Série histórica de área plantada (mil ha) de trigo no Nordeste do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Area_NE.png", height=6, width=7, dpi=600)
+```
+
+# Produção de Trigo 
+
+## Produção de Trigo no Brasil
+
+
+```{r include=FALSE}
+BR_prod <- read_csv("Producao.csv") %>% 
+  gather("year", "Prod", 2:45)  %>% 
+  filter(REGIAO == "BRASIL") %>% 
+  arrange(desc(Prod)) 
+
+glimpse(BR_prod)
+BR_prod$year <- as.numeric(BR_prod$year)
+```
+
+```{r echo=FALSE, message=FALSE}
+ggplot(BR_prod, aes(x=year, y=Prod, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + geom_line() + geom_point() + theme_bw() +
+  scale_color_manual(values = c("blue")) +
+  labs(y="Área plantada (mil ha)", x="", title="Série histórica de produção (mil ton) de trigo no Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("BR_prod.png", height=6, width=7, dpi=600)
+```
+
+## Produção de Trigo nas macro-regiões do Brasil
+
+```{r include=FALSE}
+MBR_prod <- read_csv("Producao.csv") %>% 
+  gather("year", "Prod", 2:45)  %>% 
+  filter(REGIAO == "NORTE-NORDESTE" | REGIAO=="CENTRO-SUL")
+
+glimpse(MBR_prod)
+MBR_prod$year <- as.numeric(MBR_prod$year)
+```
+
+```{r echo=FALSE, message=FALSE}
+ggplot(MBR_prod, aes(x=year, y=Prod, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + geom_line() + geom_point() + theme_bw() +
+  scale_color_manual(values = c("blue", "red", "black")) +
+  labs(y="Área plantada (mil ha)", x="", title="Série histórica de produção (mil ton) de trigo nas macro-regiões do Brasil", subtitle= "Fonte: Conab Fev/2020",  caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=10, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("MBR_prod.png", height=6, width=7, dpi=600)
+```
+
+
+
+## Produção de Trigo nas regiões brasileiras
+
+```{r include=FALSE}
+Prod <- read_csv("Producao.csv") %>% 
+  gather("year", "Prod", 2:45)  %>% 
+  filter(REGIAO == "NORTE" | REGIAO == "NORDESTE" | REGIAO == "CENTRO-OESTE" | REGIAO == "SUDESTE" | REGIAO == "SUL")
+#filter(Region == "Brasil")
+
+glimpse(Prod)
+Prod$year <- as.numeric(Prod$year)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Prod, aes(x=year, y=Prod, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + 
+  geom_line() + geom_point() +
+  theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red", "black", "purple")) +
+  labs(y="Produção de trigo (mil ton)", x="", title="Série histórica de produção (mil ton) de trigo no Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Trigo_prod.png", height=6, width=7, dpi=600)
+```
+
+
+
+
+## Produção de Trigo nos estados do Sudeste
+
+```{r include=FALSE}
+Prod_SE <- read_csv("Producao.csv") %>% 
+  gather("year", "Prod", 2:45)  %>% 
+  filter(REGIAO == "SP" | REGIAO == "ES" | REGIAO == "MG" | REGIAO == "RJ")
+
+glimpse(Prod_SE)
+Prod_SE$year <- as.numeric(Prod_SE$year)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Prod_SE, aes(x=year, y=Prod, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + 
+  geom_line() + geom_point() +
+  theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red", "black")) +
+  labs(y="Produção de trigo (mil ton)", x="", title="Série histórica de produção (mil ton) de trigo no Sudeste do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Trigo_prod_SE.png", height=6, width=7, dpi=600)
+```
+
+
+## Produção de Trigo nos estados do Sul
+
+```{r include=FALSE}
+Prod_S <- read_csv("Producao.csv") %>% 
+  gather("year", "Prod", 2:45)  %>% 
+  filter(REGIAO == "RS" | REGIAO == "SC" | REGIAO == "PR")
+
+glimpse(Prod_S)
+Prod_S$year <- as.numeric(Prod_S$year)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Prod_S, aes(x=year, y=Prod, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + 
+  geom_line() + geom_point() +
+  theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red", "black")) +
+  labs(y="Produção de trigo (mil ton)", x="", title="Série histórica de produção (mil ton) de trigo no Sul do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Trigo_prod_S.png", height=6, width=7, dpi=600)
+```
+
+
+
+## Produção de Trigo nos estados do Centro-Oeste
+
+```{r include=FALSE}
+Prod_CO <- read_csv("Producao.csv") %>% 
+  gather("year", "Prod", 2:45)  %>% 
+  filter(REGIAO == "MT" | REGIAO == "MS" | REGIAO == "GO")
+
+glimpse(Prod_CO)
+Prod_CO$year <- as.numeric(Prod_CO$year)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Prod_CO, aes(x=year, y=Prod, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + 
+  geom_line() + geom_point() +
+  theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red", "black")) +
+  labs(y="Produção de trigo (mil ton)", x="", title="Série histórica de produção (mil ton) de trigo no Centro-Oeste do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Trigo_prod_CO.png", height=6, width=7, dpi=600)
+```
+
+
+## Produção de Trigo nos estados do Nordeste
+
+```{r include=FALSE}
+Prod_NE <- read_csv("Area.csv") %>% 
+  gather("year", "Prod", 2:45)  %>% 
+  filter(REGIAO == "BA" | REGIAO == "SE" | REGIAO == "PE" | REGIAO == "RN" | REGIAO == "PB" | REGIAO == "PI" | REGIAO == "MA" | REGIAO == "CE" | REGIAO == "AL")
+
+glimpse(Prod_NE)
+Prod_NE$year <- as.numeric(Prod_NE$year)
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Prod_NE, aes(x=year, y=Prod, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + 
+  geom_line() + geom_point() +
+  theme_bw() +
+  scale_color_manual(values = c("green", "blue", "red", "black", "purple", "orange", "grey", "yellow", "brown")) +
+labs(y="Produção de trigo (mil ton)", x="", title="Série histórica de produção (mil ton) de trigo no Nordeste do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Prod_NE.png", height=6, width=7, dpi=600)
+```
+
+# Produtividade de Trigo
+
+```{r include=FALSE}
+BR_yield <- read_csv("produt.csv") %>% 
+  gather("year", "yield", 2:45)  %>% 
+  filter(REGIAO == "BRASIL") %>% 
+  arrange(desc(yield))
+
+glimpse(BR_yield)
+BR_yield$year <- as.numeric(BR_yield$year)
+```
+
+## Produtividade de Trigo no Brasil
+
+```{r echo=FALSE, message=FALSE}
+ggplot(BR_yield, aes(x=year, y=yield, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + geom_line() + geom_point() + theme_bw() +
+  scale_color_manual(values = c("blue")) +
+  labs(y="Produtividade (kg/ha)", x="", title="Série histórica de produtividade (kg/ha) de trigo no Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("BR_yield.png", height=6, width=7, dpi=600)
+```
+
+## Produtividade de Trigo nas macro-regiões do Brasil
+
+```{r include=FALSE}
+MBR_yield <- read_csv("produt.csv") %>% 
+  gather("year", "yield", 2:45)  %>% 
+  filter(REGIAO == "NORTE-NORDESTE" | REGIAO=="CENTRO-SUL")
+
+glimpse(MBR_yield)
+MBR_yield$year <- as.numeric(MBR_yield$year)
+```
+
+```{r echo=FALSE, message=FALSE}
+ggplot(MBR_yield, aes(x=year, y=yield, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + geom_line() + geom_point() + theme_bw() +
+  scale_color_manual(values = c("blue", "red", "black")) +
+  labs(y="Produtividade (kg/ha)", x="", title="Série histórica de produtividade (kg/ha) de macro-regiões do Brasil", subtitle= "Fonte: Conab Fev/2020",  caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=10, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("MBR_yield.png", height=6, width=7, dpi=600)
+```
+
+## Produtividade de Trigo nas regiões brasileiras
+
+```{r include=FALSE}
+Yield_BR <- read_csv("produt.csv") %>% 
+  gather("year", "Area", 2:45)  %>% 
+  filter(REGIAO == "NORTE" | REGIAO == "NORDESTE" | REGIAO == "CENTRO-OESTE" | REGIAO == "SUDESTE" | REGIAO == "SUL")
+#filter(Region == "Brasil")
+
+glimpse(Yield_BR)
+Yield_BR$year <- as.numeric(Yield_BR$year)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Yield_BR, aes(x=year, y=Area, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + 
+  geom_line() + geom_point() +
+  theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red", "black", "purple")) +
+labs(y="Produtividade (kg/ha)", x="", title="Série histórica de produtividade (kg/ha) de trigo no Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Yield_BR.png", height=6, width=7, dpi=600)
+```
+
+
+
+## Produtividade de Trigo nos estados do Sudeste
+
+```{r include=FALSE}
+Yield_SE <- read_csv("produt.csv") %>% 
+  gather("year", "yield", 2:45)  %>% 
+  filter(REGIAO == "SP" | REGIAO == "ES" | REGIAO == "MG" | REGIAO == "RJ")
+
+glimpse(Yield_SE)
+Yield_SE$year <- as.numeric(Yield_SE$year)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Yield_SE, aes(x=year, y=yield, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + 
+  geom_line() + geom_point() +
+  theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red", "black")) +
+labs(y="Produtividade (kg/ha)", x="", title="Série histórica de produtividade (kg/ha) de trigo no Sudeste do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Yield_SE.png", height=6, width=7, dpi=600)
+```
+
+
+## Produtividade de Trigo nos estados do Sul
+
+```{r include=FALSE}
+Yield_S <- read_csv("produt.csv") %>% 
+  gather("year", "yield", 2:45)  %>% 
+  filter(REGIAO == "RS" | REGIAO == "SC" | REGIAO == "PR")
+
+glimpse(Yield_S)
+Yield_S$year <- as.numeric(Yield_S$year)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Yield_S, aes(x=year, y=yield, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + 
+  geom_line() + geom_point() +
+  theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red")) +
+labs(y="Produtividade (kg/ha)", x="", title="Série histórica de produtividade (kg/ha) de trigo no Nordeste do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 14, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Yield_S.png", height=6, width=7, dpi=600)
+```
+
+
+
+## Produtividade de Trigo nos estados do Centro-Oeste
+
+```{r include=FALSE}
+Yield_CO <- read_csv("produt.csv") %>% 
+  gather("year", "Area", 2:45)  %>% 
+  filter(REGIAO == "MT" | REGIAO == "MS" | REGIAO == "GO")
+
+glimpse(Yield_CO)
+Yield_CO$year <- as.numeric(Yield_CO$year)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Yield_CO, aes(x=year, y=Area, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + 
+  geom_line() + geom_point() +
+  theme_bw() +
+  scale_color_manual(values = c("blue", "green", "red", "black")) +
+  labs(y="Produtividade (kg/ha)", x="", title="Série histórica de produtividade (kg/ha) de trigo no Centro-Oeste do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=11, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Yield_CO.png", height=6, width=7, dpi=600)
+```
+
+
+
+## Produtividade de Trigo nos estados do Nordeste
+
+```{r include=FALSE}
+Yield_NE <- read_csv("produt.csv") %>% 
+  gather("year", "yield", 2:45)  %>% 
+  filter(REGIAO == "BA" | REGIAO == "SE" | REGIAO == "PE" | REGIAO == "RN" | REGIAO == "PB" | REGIAO == "PI" | REGIAO == "MA" | REGIAO == "CE" | REGIAO == "AL")
+
+glimpse(Yield_NE)
+Yield_NE$year <- as.numeric(Yield_NE$year)
+```
+
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Yield_NE, aes(x=year, y=yield, linetype=REGIAO, color=REGIAO, pch=REGIAO)) + 
+  geom_line() + geom_point() +
+  theme_bw() +
+  scale_color_manual(values = c("green", "blue", "red", "black", "purple", "orange", "grey", "yellow", "brown")) +
+  labs(y="Produtividade (kg/ha)", x="", title="Série histórica de produtividade (kg/ha) de trigo no Nordeste do Brasil", subtitle= "Fonte: Conab Fev/2020", caption="Figura: Maxwel C Oliveira") +
+  theme(legend.position = "right",
+        legend.title = element_blank(), plot.title = element_text(size=12, face="bold", color="#1A171B"),
+        plot.subtitle = element_text(size=10, face ="bold", color="#006729"), 
+        axis.title = element_text(size = 15, face ="bold", color="#1A171B"), 
+        axis.text = element_text(size = 13, color="#1A171B")) +
+  ggsave("Yield_NE.png", height=6, width=7, dpi=600)
+```
