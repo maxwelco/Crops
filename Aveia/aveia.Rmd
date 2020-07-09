@@ -1,0 +1,84 @@
+---
+title: "aveia"
+author: "Maxwel Coura Oliveira"
+date: "6/18/2020"
+output: html_document
+---
+
+
+```{r include=FALSE}
+library(tidyverse)
+library(ggthemes)
+library(patchwork)
+```
+
+
+```{r}
+area_br <- read_csv("area.csv") %>% 
+  pivot_longer(cols = 2:45, names_to = "year", values_to = "area")
+
+prod_br <- read_csv("producao.csv") %>% 
+  pivot_longer(cols = 2:45, names_to = "year", values_to = "prod")
+
+yield_br <- read_csv("produtividade.csv") %>% 
+  pivot_longer(cols = 2:45, names_to = "year", values_to = "yield")
+
+brasil <- bind_cols(area_br, prod_br, yield_br) %>% 
+  select(UF, year, area, prod, yield) %>% 
+  mutate(area = gsub("-","0", area),
+         prod = gsub("-","0", prod),
+         yield = gsub("-","0", yield)) %>% 
+#  filter(area != "0") %>% 
+  mutate(yield = gsub(",","", yield),
+         area = gsub(",","", area),
+         prod = gsub(",","", prod)) %>% 
+  mutate(yield = as.numeric(yield),
+         area = as.numeric(area),
+         prod = as.numeric(prod),
+         year = as.numeric(year)) %>% 
+  mutate(
+         prod = prod / 1000)
+
+brasil
+```
+
+
+```{r}
+brasil %>% 
+  filter(area!= 0 & UF != "CENTRO-OESTE" &  UF != "SUL" & UF != "BRASIL" & UF != "CENTRO-SUL") %>% 
+  ggplot() + aes(x=year, y=prod, size=area, color=UF) + geom_jitter(alpha=0.2) +
+    geom_smooth(method = 'loess',formula=y~x, se=FALSE, show.legend = FALSE) +
+  #facet_wrap(~UF) +
+  labs(x="", y="Produção de aveia (ton/ha)", title ="Produtividade de aveia (kg/ha) por estado brasileiro", subtitle= "Fonte: Conab Junho/2020", caption="Figura: Maxwel C Oliveira") + theme_bw() +
+  scale_size_continuous(name="Área (mil ha)") +
+  theme(legend.position = "bottom",
+        panel.grid = element_blank(),
+        legend.title = element_text(),  
+        #plot.background = element_rect(fill="#1A171B"),
+        plot.title = element_text(face ="bold", color="#1A171B"), 
+        plot.subtitle = element_text(face ="bold", color="#006729", size=8), 
+        axis.title = element_text(face ="bold", color="#1A171B"), 
+        axis.text.x = element_text(color="#1A171B", angle = 30),
+        axis.text.y = element_text(color="#1A171B")) +
+  ggsave("states_yield.pdf", width = 6, height=6, dpi=600)
+```
+
+```{r}
+brasil %>% 
+  filter(area!= 0 & UF != "CENTRO-OESTE" &  UF != "SUL" & UF != "BRASIL" & UF != "CENTRO-SUL") %>% 
+  ggplot() + aes(x=year, y=yield, size=area, color=UF) + geom_jitter(alpha=0.2) +
+    geom_smooth(method = 'loess',formula=y~x, se=FALSE, show.legend = FALSE) +
+  #facet_wrap(~UF) +
+  labs(x="", y="Produtividade de aveia (kg/ha)", title ="Produtividade de aveia (kg/ha) por estado brasileiro", subtitle= "Fonte: Conab Junho/2020", caption="Figura: Maxwel C Oliveira") + theme_bw() +
+  scale_size_continuous(name="Área (mi ha)") +
+  theme(legend.position = "bottom",
+        panel.grid = element_blank(),
+        legend.title = element_text(),  
+        #plot.background = element_rect(fill="#1A171B"),
+        plot.title = element_text(face ="bold", color="#1A171B"), 
+        plot.subtitle = element_text(face ="bold", color="#006729", size=8), 
+        axis.title = element_text(face ="bold", color="#1A171B"), 
+        axis.text.x = element_text(color="#1A171B", angle = 0),
+        axis.text.y = element_text(color="#1A171B")) +
+  ggsave("states_prod.pdf", width = 6, height=6, dpi=600)
+```
