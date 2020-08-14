@@ -16,7 +16,9 @@ Area_ES <- read_csv("Area.csv") %>%
 #filter(Region == "Brasil")
 
 glimpse(Area_ES)
-Area_ES$year <- as.numeric(Area_ES$year)
+Area_ES <- Area_ES %>% 
+  mutate(year = as.numeric(year)) %>% 
+  mutate_if(is.character, as.factor)
 ```
 
 ```{r include=FALSE}
@@ -25,7 +27,9 @@ Prod_ES <- read_csv("Producao.csv") %>%
   filter(REGIAO != "BRASIL" & REGIAO != "NORTE" & REGIAO != "NORDESTE" & REGIAO != "CENTRO-OESTE" & REGIAO != "SUDESTE" & REGIAO != "SUL" & REGIAO != "NORTE-NORDESTE" & REGIAO != "CENTRO-SUL")
 
 glimpse(Prod_ES)
-Prod_ES$year <- as.numeric(Prod_ES$year)
+Prod_ES <- Prod_ES %>% 
+  mutate(year = as.numeric(year)) %>% 
+  mutate_if(is.character, as.factor)
 ```
 
 
@@ -36,13 +40,16 @@ Yield_ES <- read_csv("produt.csv") %>%
   filter(REGIAO != "BRASIL" & REGIAO != "NORTE" & REGIAO != "NORDESTE" & REGIAO != "CENTRO-OESTE" & REGIAO != "SUDESTE" & REGIAO != "SUL" & REGIAO != "NORTE-NORDESTE" & REGIAO != "CENTRO-SUL")
 
 glimpse(Yield_ES)
-Yield_ES$year <- as.numeric(Yield_ES$year)
+
+Yield_ES <- Yield_ES %>% 
+  mutate(year = as.numeric(year)) %>% 
+  mutate_if(is.character, as.factor)
 ```
 
 
 ```{r}
-data <- Area_ES %>% 
-    bind_cols(Prod_ES, Yield_ES) %>% 
+data <-   inner_join(Area_ES, Prod_ES) %>% 
+  inner_join(Yield_ES) %>% 
   select(REGIAO, year, Area, Prod, yield) %>% 
   filter(REGIAO == "RS" | REGIAO == "SC" | REGIAO == "PR" | REGIAO == "MG" | REGIAO == "SP" | REGIAO == "BA" | REGIAO == "GO" | REGIAO == "MS" | REGIAO == "MT") %>% 
   filter(yield != 0 & Prod != 0) %>% 
