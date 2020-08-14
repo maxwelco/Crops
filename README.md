@@ -1,2 +1,2 @@
 # Crops
-Paying with crops data from Brazil
+Crops data from Brazil
